@@ -7,6 +7,8 @@ namespace iBay
     public class Context : DbContext
     {
         public DbSet<User> User { get; set; }
+        public DbSet<Product>  Product { get; set; }
+        public DbSet<Cart> Cart { get; set; }
         public Context(DbContextOptions<Context> options)
             : base(options) { }
 

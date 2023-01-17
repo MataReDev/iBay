@@ -1,5 +1,8 @@
-﻿namespace ClassLibrary
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ClassLibrary
 {
+    [Table("Product")]
     public class Product
     {
         public int Id { get; set; }

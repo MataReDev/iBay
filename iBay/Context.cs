@@ -11,6 +11,6 @@ namespace iBay
             : base(options) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlServer(@"Data Source=PC-MATHYS-PORT\SQLEXPRESS;Initial Catalog=exo_fin;Integrated Security=True;Trust Server Certificate=true");
+            => options.UseSqlServer(@"Data Source=DESKTOP-0M2IDL4\Yoann;Initial Catalog=ibay;Integrated Security=True;Trust Server Certificate=true");
     }
 }

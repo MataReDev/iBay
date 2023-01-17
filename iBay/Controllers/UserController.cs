@@ -68,7 +68,7 @@ namespace iBay.Controllers
                 }
             }
 
-            return user;
+            return Ok(user);
         }
 
         private bool UserExists(int id)

@@ -25,15 +25,14 @@ namespace iBay.Controllers
 
         // GET: api/Users
         [HttpGet]
-        [Route("Get all users")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.User.ToListAsync();
         }
 
         // GET: api/Users/5
-        [HttpGet("{id}")]
-        [Route("Get a user")]
+        [HttpGet]
+        [Route("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
             var user = await _context.User.FindAsync(id);
@@ -48,7 +47,6 @@ namespace iBay.Controllers
 
         //POST Create
         [HttpPost]
-        [Route("Create User")]
         public IActionResult Create(User item)
         {
             
@@ -62,16 +60,18 @@ namespace iBay.Controllers
             user.Email = item.Email;
             user.Pseudo = item.Pseudo;
             user.Role = item.Role;
-            user.Password = Password.hashPassword(item.Password); ;
+            user.Password = Password.hashPassword(item.Password);
+
+            var token = "";
 
             _context.User.Add(user);
             _context.SaveChanges();
-            return Ok(user);
+            return Ok(token);
         }
 
         //POST LOGIN
         [HttpPost]
-        [Route("Login")]
+        [Route("login")]
         public IActionResult Login(string email, string password)
         {
             String hashPassword = Password.hashPassword(password);
@@ -85,11 +85,11 @@ namespace iBay.Controllers
             var token = "";
             return Ok(token);
         }
-        
 
-        // PUT: api/Users/5
-        [HttpPut("{id}")]
-        [Route("Update user")]
+
+        //PUT: api/Users/5
+        [HttpPut]
+        [Route("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
             if (id != user.Id)
@@ -124,11 +124,11 @@ namespace iBay.Controllers
         }
 
         // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        [Route("Delete user")]
+        [HttpDelete]
+        [Route("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = _context.User.Where(c => c.Id == id).FirstOrDefault();
+            var user =  _context.User.Where(c => c.Id == id).FirstOrDefault();
             if (user == null)
             {
                 return NotFound(id);
@@ -144,7 +144,7 @@ namespace iBay.Controllers
             {
                 var test = ex;
                 return BadRequest();
-            }    
+            }
         }
     }
 }

@@ -56,6 +56,7 @@ namespace iBay.Controllers
         }
 
         [HttpPost]
+        [Route("pay")]
         public async Task<IActionResult> Pay(float moneyUser, int cartId)
         {
             var cart = await _context.Cart.FindAsync(cartId);

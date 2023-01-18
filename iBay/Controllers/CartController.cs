@@ -18,10 +18,92 @@ namespace iBay.Controllers
             _context = context;
         }
 
+        //GET
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cart>>> GetProduct()
+        public async Task<IActionResult> Get(int cartId)
         {
-            return await _context.Cart.ToListAsync();
+            var cart = await _context.Cart.FindAsync(cartId);
+
+            if(cart == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(cart.listOfProducts);
         }
+
+        //POST
+        [HttpPost]
+        public async Task<IActionResult> Create(Product product, int cartId)
+            
+        {
+            if (product == null)
+            {
+                return BadRequest();
+            }
+
+            var cart = await _context.Cart.FindAsync(cartId);
+
+            if (cart == null)
+            {
+                return BadRequest();
+            }
+
+            cart.listOfProducts.Add(product);
+            _context.Cart.Update(cart);
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Pay(float moneyUser, int cartId)
+        {
+            var cart = await _context.Cart.FindAsync(cartId);
+
+            if (cart == null)
+
+            {
+                return BadRequest();
+            }
+
+            float total = 0;
+            foreach (var item in cart.listOfProducts)
+
+            {
+                total += item.price;
+            }
+
+            if (moneyUser < total)
+            {
+                return NoContent();
+            }
+
+            return Ok(moneyUser - total);
+
+        }
+
+        //DELETE
+        [HttpDelete]
+        public async Task<IActionResult> Delete(Product product, int cartId)
+        {
+            if(product== null)
+            {
+                return BadRequest();
+            }
+
+            var cart = await _context.Cart.FindAsync(cartId);
+
+            if(cart == null) 
+            { 
+                return BadRequest(); 
+            }
+
+            cart.listOfProducts.Remove(product);
+            _context.Cart.Update(cart);
+            _context.SaveChanges();
+            return Ok();
+
+        }
+        
     }
 }

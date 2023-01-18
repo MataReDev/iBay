@@ -15,7 +15,6 @@ namespace ClassLibrary
         {
             listOfProducts = new List<Product>();
         }
-
     }
 
 }

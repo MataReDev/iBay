@@ -29,7 +29,7 @@ namespace iBay.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(string id)
+        public async Task<ActionResult<User>> GetUser(int id)
         {
             var user = await _context.User.FindAsync(id);
 
@@ -38,7 +38,21 @@ namespace iBay.Controllers
                 return NotFound();
             }
 
-            return user;
+            return Ok(user);
+        }
+
+        //POST
+        [HttpPost]
+        public IActionResult Create(User user)
+        {
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            _context.User.Add(user);
+            _context.SaveChanges();
+            return Ok();
         }
 
         // PUT: api/Users/5
@@ -78,27 +92,25 @@ namespace iBay.Controllers
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
-            if (id != User.Identity.Name)
-            {
-                return Unauthorized();
-            }
-
-            var user = await _userManager.FindByIdAsync(id);
+            var user = _context.User.Where(c => c.Id == id).FirstOrDefault();
             if (user == null)
             {
-                return NotFound();
+                return NotFound(id);
             }
 
-            var deleteUserResult = await _userManager.DeleteAsync(user);
-
-            if (!deleteUserResult.Succeeded)
+            try
             {
-                return BadRequest(deleteUserResult.Errors);
+                _context.User.Remove(user);
+                _context.SaveChanges();
+                return NoContent();
             }
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                var test = ex;
+                return BadRequest();
+            }    
         }
     }
 }

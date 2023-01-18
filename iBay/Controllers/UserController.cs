@@ -9,25 +9,23 @@ using iBay.Tools;
 
 namespace iBay.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly Context _context;
-        private readonly UserManager<IdentityUser> _userManager;
 
-        public UsersController(Context context, UserManager<IdentityUser> userManager)
+
+        public UsersController(Context context)
         {
             _context = context;
-            _userManager = userManager;
         }
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public ActionResult<List<User>>GetUsers()
         {
-            return await _context.User.ToListAsync();
+            return  Ok(_context.User);
         }
 
         // GET: api/Users/5
@@ -126,7 +124,7 @@ namespace iBay.Controllers
         // DELETE: api/Users/5
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public IActionResult DeleteUser(int id)
         {
             var user =  _context.User.Where(c => c.Id == id).FirstOrDefault();
             if (user == null)

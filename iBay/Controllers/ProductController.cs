@@ -6,7 +6,6 @@ using ClassLibrary;
 
 namespace iBay.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ProductController : ControllerBase
@@ -91,7 +90,7 @@ namespace iBay.Controllers
 
         //DELETE
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        public IActionResult DeleteProduct(int id)
         {
             var product = _context.Product.Where(c => c.Id == id).FirstOrDefault();
             if (product == null)

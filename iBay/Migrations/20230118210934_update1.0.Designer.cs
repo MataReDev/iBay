@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iBay;
 
@@ -11,9 +12,11 @@ using iBay;
 namespace iBay.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20230118210934_update1.0")]
+    partial class update10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,18 +33,18 @@ namespace iBay.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("DateValidation")
+                    b.Property<DateTime>("dateValidation")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsValidated")
+                    b.Property<bool>("isValidated")
                         .HasColumnType("bit");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("userId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("userId");
 
                     b.ToTable("Cart");
                 });
@@ -112,25 +115,25 @@ namespace iBay.Migrations
 
             modelBuilder.Entity("ClassLibrary.Cart", b =>
                 {
-                    b.HasOne("ClassLibrary.User", "User")
+                    b.HasOne("ClassLibrary.User", "user")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("ClassLibrary.Product", b =>
                 {
                     b.HasOne("ClassLibrary.Cart", null)
-                        .WithMany("ListOfProducts")
+                        .WithMany("listOfProducts")
                         .HasForeignKey("CartId");
                 });
 
             modelBuilder.Entity("ClassLibrary.Cart", b =>
                 {
-                    b.Navigation("ListOfProducts");
+                    b.Navigation("listOfProducts");
                 });
 #pragma warning restore 612, 618
         }

@@ -6,7 +6,6 @@ using ClassLibrary;
 
 namespace iBay.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CartController : ControllerBase
@@ -29,7 +28,7 @@ namespace iBay.Controllers
                 return NotFound();
             }
 
-            return Ok(cart.listOfProducts);
+            return Ok(cart.ListOfProducts);
         }
 
         //POST
@@ -49,7 +48,7 @@ namespace iBay.Controllers
                 return BadRequest();
             }
 
-            cart.listOfProducts.Add(product);
+            cart.ListOfProducts.Add(product);
             _context.Cart.Update(cart);
             _context.SaveChanges();
             return Ok();
@@ -68,7 +67,7 @@ namespace iBay.Controllers
             }
 
             float total = 0;
-            foreach (var item in cart.listOfProducts)
+            foreach (var item in cart.ListOfProducts)
 
             {
                 total += item.price;
@@ -99,7 +98,7 @@ namespace iBay.Controllers
                 return BadRequest(); 
             }
 
-            cart.listOfProducts.Remove(product);
+            cart.ListOfProducts.Remove(product);
             _context.Cart.Update(cart);
             _context.SaveChanges();
             return Ok();

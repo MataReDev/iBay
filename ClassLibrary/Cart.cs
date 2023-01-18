@@ -6,14 +6,14 @@ namespace ClassLibrary
     public class Cart
     {
         public int Id { get; set; }
-        public virtual User user { get; set; }
-        public bool isValidated { get; set; }
-        public virtual ICollection<Product> listOfProducts { get; set; }
-        public DateTime dateValidation { get; set; }
+        public virtual User User { get; set; }
+        public bool IsValidated { get; set; }
+        public virtual ICollection<Product> ListOfProducts { get; set; }
+        public DateTime DateValidation { get; set; }
 
         public Cart()
         {
-            listOfProducts = new List<Product>();
+            this.ListOfProducts = new List<Product>();
         }
     }
 

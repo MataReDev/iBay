@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ClassLibrary;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System.Security.Cryptography;
+using iBay.Tools;
 
 namespace iBay.Controllers
 {
@@ -22,6 +25,7 @@ namespace iBay.Controllers
 
         // GET: api/Users
         [HttpGet]
+        [Route("Get all users")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.User.ToListAsync();
@@ -29,6 +33,7 @@ namespace iBay.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
+        [Route("Get a user")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
             var user = await _context.User.FindAsync(id);
@@ -41,22 +46,50 @@ namespace iBay.Controllers
             return Ok(user);
         }
 
-        //POST
+        //POST Create
         [HttpPost]
-        public IActionResult Create(User user)
+        [Route("Create User")]
+        public IActionResult Create(User item)
         {
-            if (user == null)
+            
+            if (item == null)
             {
                 return BadRequest();
             }
 
+            var user = new User();
+            user.Id = item.Id;
+            user.Email = item.Email;
+            user.Pseudo = item.Pseudo;
+            user.Role = item.Role;
+            user.Password = Password.hashPassword(item.Password); ;
+
             _context.User.Add(user);
             _context.SaveChanges();
-            return Ok();
+            return Ok(user);
         }
+
+        //POST LOGIN
+        [HttpPost]
+        [Route("Login")]
+        public IActionResult Login(string email, string password)
+        {
+            String hashPassword = Password.hashPassword(password);
+            var dbUser = _context.User.Where( u => u.Email == email && u.Password == hashPassword).FirstOrDefault();
+
+            if (dbUser == null)
+            {
+                return BadRequest("Email or Password is incorrect");
+            }
+
+            var token = "";
+            return Ok(token);
+        }
+        
 
         // PUT: api/Users/5
         [HttpPut("{id}")]
+        [Route("Update user")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
             if (id != user.Id)
@@ -92,6 +125,7 @@ namespace iBay.Controllers
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
+        [Route("Delete user")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = _context.User.Where(c => c.Id == id).FirstOrDefault();

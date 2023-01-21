@@ -16,42 +16,49 @@ namespace iBay.Controllers
         {
             _context = context;
         }
+        [HttpGet]
+        public ActionResult<List<Cart>> GetCart()
+        {
+            return Ok(_context.Cart);
+        }
 
         //GET
         [HttpGet]
-        public async Task<IActionResult> Get(int cartId)
+        [Route ("{id}")]
+        public async Task<IActionResult> Get(int id)
         {
-            var cart = await _context.Cart.FindAsync(cartId);
+            var cart = await _context.Cart.FindAsync(id);
 
-            if(cart == null)
-            {
-                return NotFound();
-            }
+            //if(cart == null)
+            //{
+            //    return NotFound();
+            //}
 
-            return Ok(cart.ListOfProducts);
+            return Ok(cart);
         }
 
         //POST
         [HttpPost]
-        public async Task<IActionResult> Create(Product product, int cartId)
+        public async Task<IActionResult> Create(int cartId, int productId)
             
         {
-            if (product == null)
+            var cartGET = await _context.Cart.FindAsync(cartId);
+
+            var productGET = await _context.Product.FindAsync(productId);
+
+            if (cartGET is null)
             {
-                return BadRequest();
+                return BadRequest("Cart not found");
             }
 
-            var cart = await _context.Cart.FindAsync(cartId);
-
-            if (cart == null)
+            var productCart = new ProductCart()
             {
-                return BadRequest();
-            }
+                cart = cartGET, product = productGET
+            };
 
-            cart.ListOfProducts.Add(product);
-            _context.Cart.Update(cart);
+            _context.ProductCart.Add(productCart);
             _context.SaveChanges();
-            return Ok();
+            return Ok(productCart);
         }
 
         [HttpPost]
@@ -66,11 +73,13 @@ namespace iBay.Controllers
                 return BadRequest();
             }
 
+            var listProduct = _context.ProductCart.Where(u => u.cart == cart);
+
             float total = 0;
-            foreach (var item in cart.ListOfProducts)
+            foreach (var item in listProduct)
 
             {
-                total += item.price;
+                total += item.product.price;
             }
 
             if (moneyUser < total)
@@ -84,25 +93,24 @@ namespace iBay.Controllers
 
         //DELETE
         [HttpDelete]
-        public async Task<IActionResult> Delete(Product product, int cartId)
+        public async Task<IActionResult> Delete(int cartId, int productId)
         {
-            if(product== null)
+
+            var cartGET = await _context.Cart.FindAsync(cartId);
+
+            var productGET = await _context.Product.FindAsync(productId);
+
+            if (cartGET is null)
             {
-                return BadRequest();
+                return BadRequest("Cart not found");
             }
 
-            var cart = await _context.Cart.FindAsync(cartId);
+            var ProductCartGET = _context.ProductCart.Where(u => u.product == productGET && u.cart == cartGET).FirstOrDefault();
 
-            if(cart == null) 
-            { 
-                return BadRequest(); 
-            }
-
-            cart.ListOfProducts.Remove(product);
-            _context.Cart.Update(cart);
+            _context.ProductCart.Remove(ProductCartGET);
             _context.SaveChanges();
-            return Ok();
 
+            return Ok(ProductCartGET);
         }
         
     }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iBay;
 
@@ -11,9 +12,11 @@ using iBay;
 namespace iBay.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20230120234858_Update1.4")]
+    partial class Update14
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,6 +57,9 @@ namespace iBay.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CartId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("added_time")
                         .HasColumnType("datetime2");
 
@@ -73,30 +79,9 @@ namespace iBay.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CartId");
+
                     b.ToTable("Product");
-                });
-
-            modelBuilder.Entity("ClassLibrary.ProductCart", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("cartId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("productId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("cartId");
-
-                    b.HasIndex("productId");
-
-                    b.ToTable("ProductCart");
                 });
 
             modelBuilder.Entity("ClassLibrary.User", b =>
@@ -139,23 +124,16 @@ namespace iBay.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ClassLibrary.ProductCart", b =>
+            modelBuilder.Entity("ClassLibrary.Product", b =>
                 {
-                    b.HasOne("ClassLibrary.Cart", "cart")
-                        .WithMany()
-                        .HasForeignKey("cartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("ClassLibrary.Cart", null)
+                        .WithMany("ListOfProducts")
+                        .HasForeignKey("CartId");
+                });
 
-                    b.HasOne("ClassLibrary.Product", "product")
-                        .WithMany()
-                        .HasForeignKey("productId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("cart");
-
-                    b.Navigation("product");
+            modelBuilder.Entity("ClassLibrary.Cart", b =>
+                {
+                    b.Navigation("ListOfProducts");
                 });
 #pragma warning restore 612, 618
         }

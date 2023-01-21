@@ -12,8 +12,8 @@ using iBay;
 namespace iBay.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20230118095644_initial")]
-    partial class initial
+    [Migration("20230121173158_Update1.6")]
+    partial class Update16
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,18 +33,18 @@ namespace iBay.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("dateValidation")
+                    b.Property<DateTime>("DateValidation")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("isValidated")
+                    b.Property<bool>("IsValidated")
                         .HasColumnType("bit");
 
-                    b.Property<int>("userId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("userId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Cart");
                 });
@@ -56,9 +56,6 @@ namespace iBay.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CartId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("added_time")
                         .HasColumnType("datetime2");
@@ -79,9 +76,30 @@ namespace iBay.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CartId");
-
                     b.ToTable("Product");
+                });
+
+            modelBuilder.Entity("ClassLibrary.ProductCart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("cartId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("productId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("cartId");
+
+                    b.HasIndex("productId");
+
+                    b.ToTable("ProductCart");
                 });
 
             modelBuilder.Entity("ClassLibrary.User", b =>
@@ -115,25 +133,32 @@ namespace iBay.Migrations
 
             modelBuilder.Entity("ClassLibrary.Cart", b =>
                 {
-                    b.HasOne("ClassLibrary.User", "user")
+                    b.HasOne("ClassLibrary.User", "User")
                         .WithMany()
-                        .HasForeignKey("userId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("user");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ClassLibrary.Product", b =>
+            modelBuilder.Entity("ClassLibrary.ProductCart", b =>
                 {
-                    b.HasOne("ClassLibrary.Cart", null)
-                        .WithMany("listOfProducts")
-                        .HasForeignKey("CartId");
-                });
+                    b.HasOne("ClassLibrary.Cart", "cart")
+                        .WithMany()
+                        .HasForeignKey("cartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("ClassLibrary.Cart", b =>
-                {
-                    b.Navigation("listOfProducts");
+                    b.HasOne("ClassLibrary.Product", "product")
+                        .WithMany()
+                        .HasForeignKey("productId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("cart");
+
+                    b.Navigation("product");
                 });
 #pragma warning restore 612, 618
         }

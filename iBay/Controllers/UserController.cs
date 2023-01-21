@@ -54,17 +54,20 @@ namespace iBay.Controllers
             }
 
             var user = new User();
-            user.Id = item.Id;
             user.Email = item.Email;
             user.Pseudo = item.Pseudo;
             user.Role = item.Role;
             user.Password = Password.hashPassword(item.Password);
 
+            var cart = new Cart();
+            cart.User = user;
+
             var token = "";
 
+            _context.Cart.Add(cart);
             _context.User.Add(user);
             _context.SaveChanges();
-            return Ok(token);
+            return Ok(user);
         }
 
         //POST LOGIN
@@ -80,7 +83,7 @@ namespace iBay.Controllers
                 return BadRequest("Email or Password is incorrect");
             }
 
-            var token = "";
+            var token = "token";
             return Ok(token);
         }
 
@@ -88,32 +91,27 @@ namespace iBay.Controllers
         //PUT: api/Users/5
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<ActionResult> Update(int id, User user)
         {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
+            //if (id != user.Id)
+            //    return BadRequest();
+            var userExist = await _context.User.FindAsync(id);
+            if (userExist is null) return NotFound(id);
 
-            _context.Entry(user).State = EntityState.Modified;
             try
             {
-                await _context.SaveChangesAsync();
+                userExist.Email = user.Email;
+                userExist.Pseudo = user.Pseudo;
+                userExist.Role = user.Role;
+                userExist.Password = Password.hashPassword(user.Password);
+                _context.User.Update(userExist);
+                _context.SaveChanges();
+                return Ok(userExist);
             }
-
-            catch (DbUpdateException)
+            catch(Exception ex)
             {
-                if (UserExists(id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(ex);
             }
-
-            return Ok(user);
         }
 
         private bool UserExists(int id)
@@ -136,7 +134,7 @@ namespace iBay.Controllers
             {
                 _context.User.Remove(user);
                 _context.SaveChanges();
-                return NoContent();
+                return Ok(user);
             }
             catch (Exception ex)
             {

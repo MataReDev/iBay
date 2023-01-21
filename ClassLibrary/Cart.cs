@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ClassLibrary
 {
@@ -8,13 +11,7 @@ namespace ClassLibrary
         public int Id { get; set; }
         public virtual User User { get; set; }
         public bool IsValidated { get; set; }
-        public virtual ICollection<Product> ListOfProducts { get; set; }
         public DateTime DateValidation { get; set; }
-
-        public Cart()
-        {
-            this.ListOfProducts = new List<Product>();
-        }
     }
 
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ClassLibrary;
+using iBay.Tools;
 
 namespace iBay.Controllers
 {
@@ -49,38 +50,39 @@ namespace iBay.Controllers
 
             _context.Product.Add(product);
             _context.SaveChanges();
-            return Ok();
+            return Ok(product);
         }
 
         //PUT
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
-            if (id != product.Id)
-            {
-                return BadRequest();
-            }
+            //if (id != product.Id)
+            //{
+            //    return BadRequest();
+            //}
 
-            _context.Entry(product).State = EntityState.Modified;
+            var productExist = await _context.Product.FindAsync(id);
+            if (productExist is null) return NotFound(id);
+
+            Console.WriteLine(productExist);
+
             try
             {
-                await _context.SaveChangesAsync();
+                productExist.name = product.name;
+                productExist.image = product.image;
+                productExist.price = product.price;
+                productExist.available = product.available;
+                productExist.added_time = product.added_time;
+                _context.Product.Update(productExist);
+                _context.SaveChanges();
+                return Ok(productExist);
             }
-
-            catch (DbUpdateException)
+            catch (Exception ex)
             {
-                if (ProductExists(id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(ex);
+            }      
 
-            }
-
-            return Ok(product);
         }
 
         private bool ProductExists(int id)
@@ -102,7 +104,7 @@ namespace iBay.Controllers
             {
                 _context.Product.Remove(product);
                 _context.SaveChanges();
-                return NoContent();
+                return Ok(product);
             }
             catch (Exception ex)
             {

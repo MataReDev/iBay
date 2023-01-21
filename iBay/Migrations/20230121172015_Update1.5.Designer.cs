@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iBay;
 
@@ -11,9 +12,11 @@ using iBay;
 namespace iBay.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20230121172015_Update1.5")]
+    partial class Update15
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,6 +57,9 @@ namespace iBay.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CartId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("added_time")
                         .HasColumnType("datetime2");
 
@@ -72,6 +78,8 @@ namespace iBay.Migrations
                         .HasColumnType("real");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CartId");
 
                     b.ToTable("Product");
                 });
@@ -139,6 +147,13 @@ namespace iBay.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ClassLibrary.Product", b =>
+                {
+                    b.HasOne("ClassLibrary.Cart", null)
+                        .WithMany("ListOfProducts")
+                        .HasForeignKey("CartId");
+                });
+
             modelBuilder.Entity("ClassLibrary.ProductCart", b =>
                 {
                     b.HasOne("ClassLibrary.Cart", "cart")
@@ -156,6 +171,11 @@ namespace iBay.Migrations
                     b.Navigation("cart");
 
                     b.Navigation("product");
+                });
+
+            modelBuilder.Entity("ClassLibrary.Cart", b =>
+                {
+                    b.Navigation("ListOfProducts");
                 });
 #pragma warning restore 612, 618
         }

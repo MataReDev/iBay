@@ -9,8 +9,7 @@ namespace ClassLibrary
     public class Cart
     {
         public int Id { get; set; }
-        public virtual User User { get; set; }
-        public bool IsValidated { get; set; }
+        public int UserId { get; set; }
         public DateTime DateValidation { get; set; }
     }
 

@@ -60,7 +60,7 @@ namespace iBay.Controllers
             user.Password = Password.hashPassword(item.Password);
 
             var cart = new Cart();
-            cart.User = user;
+            cart.UserId = user.Id;
 
             var token = "";
 

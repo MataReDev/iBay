@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iBay;
 
@@ -11,9 +12,11 @@ using iBay;
 namespace iBay.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20230121203614_Update1.8")]
+    partial class Update18
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,31 +36,15 @@ namespace iBay.Migrations
                     b.Property<DateTime>("DateValidation")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsValidated")
+                        .HasColumnType("bit");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.ToTable("Cart");
-                });
-
-            modelBuilder.Entity("ClassLibrary.PaymentHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<float>("Amount")
-                        .HasColumnType("real");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PaymentHistory");
                 });
 
             modelBuilder.Entity("ClassLibrary.Product", b =>

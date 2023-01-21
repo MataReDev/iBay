@@ -31,9 +31,7 @@ namespace iBay.Tools
                 context.Cart.AddRange(
                     new Cart
                     {
-                        
-                        User= user,
-                        IsValidated= false,
+                        UserId = user.Id,
                         DateValidation = DateTime.Now,
                     }
                 );

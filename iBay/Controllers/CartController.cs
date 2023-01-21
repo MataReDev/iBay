@@ -70,18 +70,18 @@ namespace iBay.Controllers
 
         [HttpPost]
         [Route("pay")]
-        public async Task<IActionResult> Pay(float moneyUser, int cartId)
+        public async Task<IActionResult> Pay(int cartId, float moneyUser)
         {
             var cart = await _context.Cart.FindAsync(cartId);
 
             if (cart is null) return BadRequest("Cart not found");
 
-            var listProduct = _context.ProductCart.Where(u => u.cart == cart);
+            var listProduct = _context.ProductCart.Where(u => u.cart == cart).ToList();
 
             if (listProduct is null) return BadRequest("No list of product found");
 
             float total = 0;
-            foreach (var item in listProduct)
+            foreach (ProductCart item in listProduct)
 
             {
                 var product = await _context.Product.FindAsync(item.productId);
@@ -91,8 +91,18 @@ namespace iBay.Controllers
 
             if (moneyUser < total)
             {
-                return NoContent();
+                return Ok("402 - Not enough money");
             }
+
+            PaymentHistory paymentHistory = new PaymentHistory()
+            {
+                UserId = cart.UserId,
+                Amount = total
+            };
+
+            _context.PaymentHistory.Add(paymentHistory);
+            _context.ProductCart.RemoveRange( _context.ProductCart.Where(u => u.cart == cart));
+            _context.SaveChanges();
 
             return Ok(moneyUser - total);
 

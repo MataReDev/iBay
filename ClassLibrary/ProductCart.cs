@@ -10,6 +10,6 @@ namespace ClassLibrary
     {
         public int Id { get; set; }
         public virtual Cart cart { get; set; }
-        public virtual Product product { get; set; }
+        public int productId { get; set; }
     }
 }

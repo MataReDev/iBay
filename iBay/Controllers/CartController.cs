@@ -28,13 +28,25 @@ namespace iBay.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var cart = await _context.Cart.FindAsync(id);
+            
+            if (cart is null) return BadRequest("Cart not found");
 
-            //if(cart == null)
-            //{
-            //    return NotFound();
-            //}
+            var listOfProductCart = _context.ProductCart.Where( u => u.cart.Id == id).ToList();
 
-            return Ok(cart);
+            if(listOfProductCart is null) return Ok("No product in this cart");
+
+            List<Product> listOfProduct = new List<Product>();
+
+            foreach (ProductCart item in listOfProductCart)
+            {
+                var product = await _context.Product.FindAsync(item.productId);
+
+                if (product is null) return BadRequest("Product not found");
+
+                listOfProduct.Add(product);
+            }
+
+            return Ok(listOfProduct);
         }
 
         //POST
@@ -44,16 +56,11 @@ namespace iBay.Controllers
         {
             var cartGET = await _context.Cart.FindAsync(cartId);
 
-            var productGET = await _context.Product.FindAsync(productId);
-
-            if (cartGET is null)
-            {
-                return BadRequest("Cart not found");
-            }
+            if (cartGET is null) return BadRequest("Cart not found");
 
             var productCart = new ProductCart()
             {
-                cart = cartGET, product = productGET
+                cart = cartGET, productId = productId
             };
 
             _context.ProductCart.Add(productCart);
@@ -67,19 +74,19 @@ namespace iBay.Controllers
         {
             var cart = await _context.Cart.FindAsync(cartId);
 
-            if (cart == null)
-
-            {
-                return BadRequest();
-            }
+            if (cart is null) return BadRequest("Cart not found");
 
             var listProduct = _context.ProductCart.Where(u => u.cart == cart);
+
+            if (listProduct is null) return BadRequest("No list of product found");
 
             float total = 0;
             foreach (var item in listProduct)
 
             {
-                total += item.product.price;
+                var product = await _context.Product.FindAsync(item.productId);
+
+                total += product.price;
             }
 
             if (moneyUser < total)
@@ -98,19 +105,16 @@ namespace iBay.Controllers
 
             var cartGET = await _context.Cart.FindAsync(cartId);
 
-            var productGET = await _context.Product.FindAsync(productId);
+            if (cartGET is null) return BadRequest("Cart not found");
 
-            if (cartGET is null)
-            {
-                return BadRequest("Cart not found");
-            }
+            var ProductCartGET = _context.ProductCart.Where(u => u.productId == productId && u.cart == cartGET).FirstOrDefault();
 
-            var ProductCartGET = _context.ProductCart.Where(u => u.product == productGET && u.cart == cartGET).FirstOrDefault();
+            if (ProductCartGET is null)  return BadRequest("This product is not in this cart");
 
             _context.ProductCart.Remove(ProductCartGET);
             _context.SaveChanges();
 
-            return Ok(ProductCartGET);
+            return Ok("Product has been deleted succesfully");
         }
         
     }

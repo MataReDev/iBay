@@ -15,96 +15,100 @@ namespace iBay.Controllers
             _context = context;
         }
 
-        //GET
+        /// <summary>
+        /// List all the products
+        /// </summary>
+        /// <returns>Return the whole list of products</returns>
+        /// <response code="200">Return list of product</response>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
+        public IActionResult GetProduct()
         {
-            return await _context.Product.ToListAsync();
+            return Ok(_context.Product);
         }
 
-        //GET id
+        /// <summary>
+        /// List a specific product by his id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Return the product specified</returns>
+        /// <response code="400">Product not found</response>
+        /// <response code="200">Return a product</response>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<IActionResult> GetProduct(int id)
         {
             var product = await _context.Product.FindAsync(id);
-
-            if (product == null)
-            {
-                return NotFound();
-            }
+            if (product == null) return BadRequest("Product not found");
 
             return Ok(product);
         }
 
-        //POST
+        /// <summary>
+        /// Create a product
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns>Return the newly product</returns>
+        /// <response code="400">Product not found</response>
+        /// <response code="200">Return a newly product</response>
         [HttpPost]
-        public IActionResult Create(Product product)
+        public IActionResult CreateProduct(Product product)
         {
-            if(product == null)
-            {
-                return BadRequest();
-            }
+            if(product is null) return BadRequest("Product not found");
 
             _context.Product.Add(product);
             _context.SaveChanges();
             return Ok(product);
         }
 
-        //PUT
+        /// <summary>
+        /// Update the product specified by his id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="item"></param>
+        /// <returns>Return the updately product</returns>
+        /// <response code="400">Product not found</response>
+        /// <response code="200">Return a newly product</response>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> UpdateProduct(int id, Product item)
         {
-            //if (id != product.Id)
-            //{
-            //    return BadRequest();
-            //}
-
-            var productExist = await _context.Product.FindAsync(id);
-            if (productExist is null) return NotFound(id);
-
-            Console.WriteLine(productExist);
+            var product = await _context.Product.FindAsync(id);
+            if (product is null) return BadRequest(id);
 
             try
             {
-                productExist.Name = product.Name;
-                productExist.Image = product.Image;
-                productExist.Price = product.Price;
-                productExist.Available = product.Available;
-                productExist.Added_time = product.Added_time;
-                _context.Product.Update(productExist);
+                product.Name = item.Name;
+                product.Image = item.Image;
+                product.Price = item.Price;
+                product.Available = item.Available;
+                product.Added_time = item.Added_time;
+                _context.Product.Update(product);
                 _context.SaveChanges();
-                return Ok(productExist);
+                return Ok(product);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex);
-            }      
-
+            }   
         }
 
-        private bool ProductExists(int id)
-        {
-            return _context.Product.Any(e => e.Id == id);
-        }
-
-        //DELETE
+        /// <summary>
+        /// Remove the specified product
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Return the product removed</returns>
+        /// <response code="400">Product not found</response>
+        /// <response code="200">Return a newly product</response>
         [HttpDelete("{id}")]
         public IActionResult DeleteProduct(int id)
         {
             var product = _context.Product.Where(c => c.Id == id).FirstOrDefault();
-            if (product == null)
-            {
-                return NotFound(id);
-            }
+            if (product is null) return NotFound(id);
 
             try
             {
                 _context.Product.Remove(product);
                 _context.SaveChanges();
                 return Ok(product);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 var test = ex;
                 return BadRequest();
             }

@@ -13,13 +13,27 @@ namespace iBay.Controllers
         {
             _context = context;
         }
+
+        /// <summary>
+        /// DEBUG - List all the cart (use to know the id of a cart)
+        /// </summary>
+        /// <returns>Return the whole list of cart</returns>
+        /// <response code="200">Returns the list of cart</response>
         [HttpGet]
         public ActionResult<List<Cart>> GetCart()
         {
             return Ok(_context.Cart);
         }
 
-        //GET
+        /// <summary>
+        /// List the products in the cart specified
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Return a list of products</returns>
+        /// <response code="400">Cart not found</response>
+        /// <response code="400">No product in this cart</response>
+        /// <response code="400">Product not found</response>
+        /// <response code="200">Returns the list of product in the cart</response>
         [HttpGet]
         [Route ("{id}")]
         public async Task<IActionResult> Get(int id)
@@ -43,9 +57,15 @@ namespace iBay.Controllers
             return Ok(listOfProduct);
         }
 
-        //POST
+        /// <summary>
+        /// Add the specified product to the specified cart
+        /// </summary>
+        /// <param name="cartId"></param>
+        /// <param name="productId"></param>
+        /// <returns>Return the newly added product</returns>
+        /// <response code="200">Returns a product</response>
         [HttpPost]
-        public IActionResult Create(int cartId, int productId)
+        public IActionResult AddProduct(int cartId, int productId)
         {
             var productCart = new ProductCart()
             {
@@ -58,9 +78,17 @@ namespace iBay.Controllers
             return Ok(productCart);
         }
 
-        //DELETE
+        /// <summary>
+        /// Remove the specified product to the specified cart
+        /// </summary>
+        /// <param name="cartId"></param>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        /// <response code="400">Cart not found</response>
+        /// <response code="400">This product is not in this cart</response>
+        /// <response code="200">Product has been deleted succesfully</response>
         [HttpDelete]
-        public async Task<IActionResult> Delete(int cartId, int productId)
+        public async Task<IActionResult> RemoveProduct(int cartId, int productId)
         {
             var cartGET = await _context.Cart.FindAsync(cartId);
             if (cartGET is null) return BadRequest("Cart not found");

@@ -1,5 +1,6 @@
 using iBay;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,13 @@ builder.Services.AddSwaggerGen(options =>
         Title = "iBay - Yoann x Mathys",
         Description = "An ASP.NET Core Web API for managing a web shop with users, products and carts"
     });
+
+    // Location of the xml
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
+
+    // Use the xml in swagger
+    options.IncludeXmlComments(xmlPath); 
 });
 builder.Services.AddDbContext<Context>();
 //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {

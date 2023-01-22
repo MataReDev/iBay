@@ -9,7 +9,6 @@ namespace iBay.Tools
         {
             using (var context = new Context(
                 serviceProvider.GetRequiredService<DbContextOptions<Context>>()))
-
             {
                 //Look for any classroom
                 if (context.Cart.Any())
@@ -20,7 +19,6 @@ namespace iBay.Tools
                 //New Teacher
                 User user = new User
                 {
-                   
                     Email = "blabla@gmail.com",
                     Pseudo = "test",
                     Password = "testt",

@@ -6,11 +6,11 @@ namespace ClassLibrary
     public class Product
     {
         public int Id { get; set; }
-        public string name { get; set; }
-        public string image { get; set; }
-        public float price { get; set; }
-        public bool available { get; set; }
-        public DateTime added_time { get; set; }
+        public string Name { get; set; }
+        public string Image { get; set; }
+        public float Price { get; set; }
+        public bool Available { get; set; }
+        public DateTime Added_time { get; set; }
 
     }
 }

@@ -66,11 +66,11 @@ namespace iBay.Controllers
 
             try
             {
-                productExist.name = product.name;
-                productExist.image = product.image;
-                productExist.price = product.price;
-                productExist.available = product.available;
-                productExist.added_time = product.added_time;
+                productExist.Name = product.Name;
+                productExist.Image = product.Image;
+                productExist.Price = product.Price;
+                productExist.Available = product.Available;
+                productExist.Added_time = product.Added_time;
                 _context.Product.Update(productExist);
                 _context.SaveChanges();
                 return Ok(productExist);

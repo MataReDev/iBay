@@ -15,7 +15,6 @@ namespace iBay.Controllers
     {
         private readonly Context _context;
 
-
         public UsersController(Context context)
         {
             _context = context;
@@ -67,6 +66,7 @@ namespace iBay.Controllers
             _context.Cart.Add(cart);
             _context.User.Add(user);
             _context.SaveChanges();
+
             return Ok(user);
         }
 

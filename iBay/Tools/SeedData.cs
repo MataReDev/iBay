@@ -3,8 +3,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace iBay.Tools
 {
+    /// <summary>
+    /// Class SeedData
+    /// </summary>
     public class SeedData
     {
+        /// <summary>
+        /// Fonction d'initialisation des données
+        /// </summary>
+        /// <param name="serviceProvider"></param>
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using (var context = new Context(

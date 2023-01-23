@@ -9,12 +9,19 @@ using iBay.Tools;
 
 namespace iBay.Controllers
 {
+    /// <summary>
+    /// Classe User
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly Context _context;
 
+        /// <summary>
+        /// Contructeur user
+        /// </summary>
+        /// <param name="context"></param>
         public UsersController(Context context)
         {
             _context = context;
@@ -52,8 +59,8 @@ namespace iBay.Controllers
         /// </summary>
         /// <param name="item"></param>
         /// <returns>Return the new user</returns>
-        /// <response code="400">No content send</response>
         /// <response code="400">A user already exists</response>
+        /// <response code="400">No content send</response>
         /// <response code="200">Return a user</response>
         [HttpPost]
         public IActionResult Create(User item)

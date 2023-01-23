@@ -4,12 +4,19 @@ using ClassLibrary;
 
 namespace iBay.Controllers
 {
+    /// <summary>
+    /// Payment controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class PayementController : ControllerBase
     {
         private readonly Context _context;
 
+        /// <summary>
+        /// Constructeur Payment
+        /// </summary>
+        /// <param name="context"></param>
         public PayementController(Context context)
         {
             _context = context;

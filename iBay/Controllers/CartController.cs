@@ -3,12 +3,18 @@ using ClassLibrary;
 
 namespace iBay.Controllers
 {
+    /// <summary>
+    /// Cart controller
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class CartController : ControllerBase
     {
         private readonly Context _context;
-
+        /// <summary>
+        /// Constructeur Cart
+        /// </summary>
+        /// <param name="context"></param>
         public CartController(Context context)
         {
             _context = context;

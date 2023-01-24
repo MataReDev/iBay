@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ClassLibrary;
 using Microsoft.AspNetCore.Authorization;
+using iBay.Tools;
 
 namespace iBay.Controllers
 {
@@ -43,7 +44,7 @@ namespace iBay.Controllers
         /// <response code="200">Returns the list of product in the cart</response>
         [HttpGet]
         [Route ("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, [FromHeader] string authorization)
         {
             var cart = await _context.Cart.FindAsync(id);
             if (cart is null) return BadRequest("Cart not found");

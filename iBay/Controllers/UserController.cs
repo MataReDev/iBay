@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
 using iBay.Tools;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Net;
 
 namespace iBay.Controllers
 {
@@ -101,16 +102,16 @@ namespace iBay.Controllers
         [Authorize]
         public async Task<ActionResult> Update(int id, User user, [FromHeader] string authorization)
         {
-            //if (id != user.Id)
-            //    return BadRequest();
             var userExist = await _context.User.FindAsync(id);
             if (userExist is null) return BadRequest("User not found");
+
             string emailToken = JwtTokenTools.GetEmailFromToken(authorization);
 
             if (emailToken != userExist.Email)
             {
                 return Unauthorized("You can't update other user");
             }
+
             try
             {
                 userExist.Email = user.Email;
@@ -140,14 +141,20 @@ namespace iBay.Controllers
         /// <response code="400">User not found</response>
         /// <response code="400">Exeption</response>
         /// <response code="200">Return the user deleted</response>
-        // DELETE: api/Users/5
         [HttpDelete]
         [Route("{id}")]
         [Authorize]
-        public IActionResult DeleteUser(int id)
+        public IActionResult DeleteUser(int id, [FromHeader] string authorization)
         {
             var user =  _context.User.Where(c => c.Id == id).FirstOrDefault();
             if (user == null) return BadRequest("User not found");
+
+            string emailToken = JwtTokenTools.GetEmailFromToken(authorization);
+
+            if (emailToken != user.Email)
+            {
+                return Unauthorized("You can't delete other user");
+            }
 
             try {
                 _context.User.Remove(user);

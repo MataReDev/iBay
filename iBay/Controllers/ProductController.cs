@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using ClassLibrary;
 using Microsoft.AspNetCore.Authorization;
+using iBay.Tools;
+using System.Net;
 
 namespace iBay.Controllers
 {
@@ -59,9 +61,16 @@ namespace iBay.Controllers
         /// <response code="200">Return a newly product</response>
         [HttpPost]
         [Authorize]
-        public IActionResult CreateProduct(Product product)
+        public IActionResult CreateProduct(Product product, [FromHeader] string authorization)
         {
             if(product is null) return BadRequest("Product not found");
+
+            string roleToken = JwtTokenTools.GetRoleFromToken(authorization);
+
+            if (roleToken != "seller")
+            {
+                return Unauthorized("You can't update other user");
+            }
 
             _context.Product.Add(product);
             _context.SaveChanges();
@@ -78,10 +87,17 @@ namespace iBay.Controllers
         /// <response code="200">Return a newly product</response>
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> UpdateProduct(int id, Product item)
+        public async Task<IActionResult> UpdateProduct(int id, Product item, [FromHeader] string authorization)
         {
             var product = await _context.Product.FindAsync(id);
             if (product is null) return BadRequest(id);
+
+            string roleToken = JwtTokenTools.GetRoleFromToken(authorization);
+
+            if (roleToken != "seller")
+            {
+                return Unauthorized("You can't update other user");
+            }
 
             try
             {
@@ -109,10 +125,17 @@ namespace iBay.Controllers
         /// <response code="200">Return a newly product</response>
         [HttpDelete("{id}")]
         [Authorize]
-        public IActionResult DeleteProduct(int id)
+        public IActionResult DeleteProduct(int id, [FromHeader] string authorization)
         {
             var product = _context.Product.Where(c => c.Id == id).FirstOrDefault();
             if (product is null) return NotFound(id);
+
+            string roleToken = JwtTokenTools.GetRoleFromToken(authorization);
+
+            if (roleToken != "seller")
+            {
+                return Unauthorized("You can't update other user");
+            }
 
             try
             {

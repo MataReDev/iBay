@@ -6,6 +6,7 @@ using ClassLibrary;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
 using iBay.Tools;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace iBay.Controllers
 {
@@ -98,13 +99,18 @@ namespace iBay.Controllers
         [HttpPut]
         [Route("{id}")]
         [Authorize]
-        public async Task<ActionResult> Update(int id, User user)
+        public async Task<ActionResult> Update(int id, User user, [FromHeader] string authorization)
         {
             //if (id != user.Id)
             //    return BadRequest();
             var userExist = await _context.User.FindAsync(id);
             if (userExist is null) return BadRequest("User not found");
+            string emailToken = JwtTokenTools.GetEmailFromToken(authorization);
 
+            if (emailToken != userExist.Email)
+            {
+                return Unauthorized("You can't update other user");
+            }
             try
             {
                 userExist.Email = user.Email;

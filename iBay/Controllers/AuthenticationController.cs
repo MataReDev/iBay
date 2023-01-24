@@ -49,20 +49,44 @@ namespace iBay.Controllers
                 new Claim(ClaimTypes.Role, dbUser.Role),
             };
 
-            string token = GenerateTokenString(_config["Jwt:Key"],claims);
+            string token = GenerateTokenString(_config["Jwt:Key"], claims);
             return Ok(token);
         }
 
         [HttpGet]
         public IActionResult TestTOKEN(string tokenComplet)
         {
-            if (tokenComplet != null && tokenComplet.StartsWith("Bearer", StringComparison.OrdinalIgnoreCase))
-            {
-                var token = tokenComplet.Substring("Bearer ".Length).Trim();
-                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-                return Ok(jwt.Claims.First(c => c.Type == "email").Value);
-            }
-            return Ok("pas de token");
+            tokenComplet = tokenComplet.Substring("Bearer ".Length).Trim();
+            var handler = new JwtSecurityTokenHandler();
+            var jsontoken = handler.ReadToken(tokenComplet);
+            var tokenS = jsontoken as JwtSecurityToken;
+            var email = tokenS.Claims.First(c => c.Type == "email").Value;
+            var role = tokenS.Claims.First(c => c.Type == "role").Value;
+
+            return Ok(email + role);
+
+        }
+
+        [HttpGet, Route("email")]
+        public IActionResult GetEmailFromToken([FromHeader]string authorization)
+        {
+            authorization = authorization.Substring("Bearer ".Length).Trim();
+            var handler = new JwtSecurityTokenHandler();
+            var jsontoken = handler.ReadToken(authorization);
+            var tokenS = jsontoken as JwtSecurityToken;
+            var email = tokenS.Claims.First(c => c.Type == "email").Value;
+            return Ok(email);
+        }
+
+        [HttpGet, Route("role")]
+        public IActionResult GetRoleFromToken([FromHeader] string authorization)
+        {
+            authorization = authorization.Substring("Bearer ".Length).Trim();
+            var handler = new JwtSecurityTokenHandler();
+            var jsontoken = handler.ReadToken(authorization);
+            var tokenS = jsontoken as JwtSecurityToken;
+            var role = tokenS.Claims.First(c => c.Type == "role").Value;
+            return Ok(role);
         }
 
         [NonAction]

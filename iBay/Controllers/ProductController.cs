@@ -77,6 +77,7 @@ namespace iBay.Controllers
         /// <response code="400">Product not found</response>
         /// <response code="200">Return a newly product</response>
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateProduct(int id, Product item)
         {
             var product = await _context.Product.FindAsync(id);
@@ -107,6 +108,7 @@ namespace iBay.Controllers
         /// <response code="400">Product not found</response>
         /// <response code="200">Return a newly product</response>
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult DeleteProduct(int id)
         {
             var product = _context.Product.Where(c => c.Id == id).FirstOrDefault();

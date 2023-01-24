@@ -97,6 +97,7 @@ namespace iBay.Controllers
         /// <response code="200">Return the user updated</response>
         [HttpPut]
         [Route("{id}")]
+        [Authorize]
         public async Task<ActionResult> Update(int id, User user)
         {
             //if (id != user.Id)
@@ -136,6 +137,7 @@ namespace iBay.Controllers
         // DELETE: api/Users/5
         [HttpDelete]
         [Route("{id}")]
+        [Authorize]
         public IActionResult DeleteUser(int id)
         {
             var user =  _context.User.Where(c => c.Id == id).FirstOrDefault();

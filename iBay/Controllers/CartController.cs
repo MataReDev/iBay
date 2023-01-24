@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ClassLibrary;
+using Microsoft.AspNetCore.Authorization;
 
 namespace iBay.Controllers
 {
@@ -71,6 +72,7 @@ namespace iBay.Controllers
         /// <returns>Return the newly added product</returns>
         /// <response code="200">Returns a product</response>
         [HttpPost]
+        [Authorize]
         public IActionResult AddProduct(int cartId, int productId)
         {
             var productCart = new ProductCart()
@@ -94,6 +96,7 @@ namespace iBay.Controllers
         /// <response code="400">This product is not in this cart</response>
         /// <response code="200">Product has been deleted succesfully</response>
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> RemoveProduct(int cartId, int productId)
         {
             var cartGET = await _context.Cart.FindAsync(cartId);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ClassLibrary;
+using Microsoft.AspNetCore.Authorization;
 
 namespace iBay.Controllers
 {
@@ -55,6 +56,7 @@ namespace iBay.Controllers
         /// <response code="200">Money back : (float) </response>
         [HttpPost]
         [Route("pay")]
+        [Authorize]
         public async Task<IActionResult> Pay(int cartId, float moneyUser)
         {
             var cart = await _context.Cart.FindAsync(cartId);

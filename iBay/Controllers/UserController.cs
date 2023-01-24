@@ -85,26 +85,6 @@ namespace iBay.Controllers
             return Ok(user);
         }
 
-        /// <summary>
-        /// Provides login system
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="password"></param>
-        /// <returns>Return a login token</returns>
-        /// <response code="400">Email or Password is incorrect</response>
-        /// <response code="200">Return a token</response>
-        [HttpPost]
-        [Route("login")]
-        public IActionResult Login(string email, string password)
-        {
-            String hashPassword = Password.hashPassword(password);
-
-            var dbUser = _context.User.Where( u => u.Email == email.ToLower() && u.Password == hashPassword).FirstOrDefault();
-            if (dbUser == null) return BadRequest("Email or Password is incorrect");
-
-            var token = "token";
-            return Ok(token);
-        }
 
         /// <summary>
         /// Update a specific user

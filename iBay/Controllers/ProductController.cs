@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ClassLibrary;
+using Microsoft.AspNetCore.Authorization;
 
 namespace iBay.Controllers
 {
@@ -57,6 +58,7 @@ namespace iBay.Controllers
         /// <response code="400">Product not found</response>
         /// <response code="200">Return a newly product</response>
         [HttpPost]
+        [Authorize]
         public IActionResult CreateProduct(Product product)
         {
             if(product is null) return BadRequest("Product not found");

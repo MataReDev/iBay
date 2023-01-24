@@ -53,6 +53,18 @@ namespace iBay.Controllers
             return Ok(token);
         }
 
+        [HttpGet]
+        public IActionResult TestTOKEN(string tokenComplet)
+        {
+            if (tokenComplet != null && tokenComplet.StartsWith("Bearer", StringComparison.OrdinalIgnoreCase))
+            {
+                var token = tokenComplet.Substring("Bearer ".Length).Trim();
+                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+                return Ok(jwt.Claims.First(c => c.Type == "email").Value);
+            }
+            return Ok("pas de token");
+        }
+
         [NonAction]
         public string GenerateTokenString(string secret, List<Claim> claims)
         {

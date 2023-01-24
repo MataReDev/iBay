@@ -1,5 +1,7 @@
+using iBay;
 using iBay.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -45,7 +47,11 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
+//builder.Services.AddTransient<AuthenticationController, UsersController, ProductController, PayementController, CartController>();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<Context>(options =>
+    options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 

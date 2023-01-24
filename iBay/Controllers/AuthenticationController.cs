@@ -46,6 +46,7 @@ namespace iBay.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, dbUser.Email),
+                new Claim(ClaimTypes.Role, dbUser.Role),
             };
 
             string token = GenerateTokenString(_config["Jwt:Key"],claims);

@@ -42,12 +42,16 @@ namespace iBay.Controllers
         /// <response code="400">No product in this cart</response>
         /// <response code="400">Product not found</response>
         /// <response code="200">Returns the list of product in the cart</response>
-        [HttpGet]
-        [Route ("{id}")]
+        [HttpGet, Authorize, Route ("{id}")]
         public async Task<IActionResult> Get(int id, [FromHeader] string authorization)
         {
             var cart = await _context.Cart.FindAsync(id);
             if (cart is null) return BadRequest("Cart not found");
+
+            string idToken = JwtTokenTools.GetIdFromToken(authorization);
+
+            if (idToken != cart.UserId.ToString())
+            return Unauthorized("Vous n'avez pas le droit");
 
             var listOfProductCart = _context.ProductCart.Where( u => u.CartId == id).ToList();
             if(listOfProductCart is null) return Ok("No product in this cart");
@@ -72,10 +76,17 @@ namespace iBay.Controllers
         /// <param name="productId"></param>
         /// <returns>Return the newly added product</returns>
         /// <response code="200">Returns a product</response>
-        [HttpPost]
-        [Authorize]
-        public IActionResult AddProduct(int cartId, int productId)
+        [HttpPost, Authorize]
+        public async Task<IActionResult> AddProduct(int cartId, int productId, [FromHeader] string authorization)
         {
+            var cartGET = await _context.Cart.FindAsync(cartId);
+            if (cartGET is null) return BadRequest("Cart not found");
+
+            string idToken = JwtTokenTools.GetIdFromToken(authorization);
+
+            if (idToken != cartGET.UserId.ToString())
+            return Unauthorized("Vous n'avez pas le droit");
+
             var productCart = new ProductCart()
             {
                 CartId = cartId,
@@ -96,12 +107,16 @@ namespace iBay.Controllers
         /// <response code="400">Cart not found</response>
         /// <response code="400">This product is not in this cart</response>
         /// <response code="200">Product has been deleted succesfully</response>
-        [HttpDelete]
-        [Authorize]
-        public async Task<IActionResult> RemoveProduct(int cartId, int productId)
+        [HttpDelete, Authorize]
+        public async Task<IActionResult> RemoveProduct(int cartId, int productId, [FromHeader] string authorization)
         {
             var cartGET = await _context.Cart.FindAsync(cartId);
             if (cartGET is null) return BadRequest("Cart not found");
+
+            string idToken = JwtTokenTools.GetIdFromToken(authorization);
+
+            if (idToken != cartGET.UserId.ToString())
+                return Unauthorized("Vous n'avez pas le droit");
 
             var ProductCartGET = _context.ProductCart.Where(u => u.ProductId == productId && u.CartId == cartId).FirstOrDefault();
             if (ProductCartGET is null)  return BadRequest("This product is not in this cart");

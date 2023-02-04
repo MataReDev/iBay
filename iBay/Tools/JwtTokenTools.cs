@@ -24,5 +24,15 @@ namespace iBay.Tools
             var role = tokenS.Claims.First(c => c.Type == "role").Value;
             return role;
         }
+        
+        public static string GetIdFromToken([FromHeader] string authorization)
+        {
+            authorization = authorization.Substring("Bearer ".Length).Trim();
+            var handler = new JwtSecurityTokenHandler();
+            var jsontoken = handler.ReadToken(authorization);
+            var tokenS = jsontoken as JwtSecurityToken;
+            var id = tokenS.Claims.First(c => c.Type == "id").Value;
+            return id;
+        }
     }
 }

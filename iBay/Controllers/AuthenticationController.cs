@@ -1,4 +1,5 @@
-﻿using iBay.Tools;
+﻿using ClassLibrary;
+using iBay.Tools;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -47,6 +48,7 @@ namespace iBay.Controllers
             {
                 new Claim(ClaimTypes.Email, dbUser.Email),
                 new Claim(ClaimTypes.Role, dbUser.Role),
+                new Claim(ClaimTypes.NameIdentifier, dbUser.Id.ToString(), ClaimValueTypes.Integer32),
             };
 
             string token = GenerateTokenString(_config["Jwt:Key"], claims);
@@ -62,6 +64,7 @@ namespace iBay.Controllers
             var tokenS = jsontoken as JwtSecurityToken;
             var email = tokenS.Claims.First(c => c.Type == "email").Value;
             var role = tokenS.Claims.First(c => c.Type == "role").Value;
+            var id = tokenS.Claims.First(c => c.Type == "id").Value;
 
             return Ok(email + role);
 
@@ -86,6 +89,17 @@ namespace iBay.Controllers
             var jsontoken = handler.ReadToken(authorization);
             var tokenS = jsontoken as JwtSecurityToken;
             var role = tokenS.Claims.First(c => c.Type == "role").Value;
+            return Ok(role);
+        }
+
+        [NonAction]
+        public IActionResult GetIdFromToken([FromHeader] string authorization)
+        {
+            authorization = authorization.Substring("Bearer ".Length).Trim();
+            var handler = new JwtSecurityTokenHandler();
+            var jsontoken = handler.ReadToken(authorization);
+            var tokenS = jsontoken as JwtSecurityToken;
+            var role = tokenS.Claims.First(c => c.Type == "id").Value;
             return Ok(role);
         }
 

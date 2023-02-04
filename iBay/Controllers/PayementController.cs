@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ClassLibrary;
 using Microsoft.AspNetCore.Authorization;
+using iBay.Tools;
 
 namespace iBay.Controllers
 {
@@ -32,10 +33,16 @@ namespace iBay.Controllers
         /// <response code="200">No product in this cart</response>
         /// <response code="200">Returns the historic of payment of the user</response>
         [HttpGet]
-        public async Task<IActionResult> GetPayementByUser(int userId)
+        public async Task<IActionResult> GetPayementByUser(int userId, [FromHeader] string authorization)
         {
             var user = await _context.User.FindAsync(userId);
             if (user is null) return BadRequest("User not found");
+
+            string emailToken = JwtTokenTools.GetEmailFromToken(authorization);
+            if (emailToken != user.Email)
+            {
+                return Unauthorized("You can't delete other user");
+            }
 
             var payementHistoryGET = _context.PaymentHistory.Where(u => u.UserId == userId).ToList();
             if (payementHistoryGET is null) return Ok("No product in this cart");
@@ -57,10 +64,14 @@ namespace iBay.Controllers
         [HttpPost]
         [Route("pay")]
         [Authorize]
-        public async Task<IActionResult> Pay(int cartId, float moneyUser)
+        public async Task<IActionResult> Pay(int cartId, float moneyUser, [FromHeader] string authorization)
         {
             var cart = await _context.Cart.FindAsync(cartId);
             if (cart is null) return BadRequest("Cart not found");
+
+            string idToken = JwtTokenTools.GetIdFromToken(authorization);
+            if (idToken != cart.UserId.ToString())
+            return Unauthorized("Vous n'avez pas le droit");
 
             var listProduct = _context.ProductCart.Where(u => u.CartId == cartId).ToList();
             if (listProduct is null) return BadRequest("No list of product found");

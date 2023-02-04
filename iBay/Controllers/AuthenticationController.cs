@@ -71,39 +71,6 @@ namespace iBay.Controllers
         }
 
         [NonAction]
-        public IActionResult GetEmailFromToken([FromHeader]string authorization)
-        {
-            authorization = authorization.Substring("Bearer ".Length).Trim();
-            var handler = new JwtSecurityTokenHandler();
-            var jsontoken = handler.ReadToken(authorization);
-            var tokenS = jsontoken as JwtSecurityToken;
-            var email = tokenS.Claims.First(c => c.Type == "email").Value;
-            return Ok(email);
-        }
-
-        [NonAction]
-        public IActionResult GetRoleFromToken([FromHeader] string authorization)
-        {
-            authorization = authorization.Substring("Bearer ".Length).Trim();
-            var handler = new JwtSecurityTokenHandler();
-            var jsontoken = handler.ReadToken(authorization);
-            var tokenS = jsontoken as JwtSecurityToken;
-            var role = tokenS.Claims.First(c => c.Type == "role").Value;
-            return Ok(role);
-        }
-
-        [NonAction]
-        public IActionResult GetIdFromToken([FromHeader] string authorization)
-        {
-            authorization = authorization.Substring("Bearer ".Length).Trim();
-            var handler = new JwtSecurityTokenHandler();
-            var jsontoken = handler.ReadToken(authorization);
-            var tokenS = jsontoken as JwtSecurityToken;
-            var role = tokenS.Claims.First(c => c.Type == "id").Value;
-            return Ok(role);
-        }
-
-        [NonAction]
         public string GenerateTokenString(string secret, List<Claim> claims)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));

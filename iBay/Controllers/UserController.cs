@@ -77,11 +77,13 @@ namespace iBay.Controllers
             user.Role = item.Role;
             user.Password = Password.hashPassword(item.Password);
 
+            _context.User.Add(user);
+            _context.SaveChanges();
+
             var cart = new Cart();
             cart.UserId = user.Id;
 
             _context.Cart.Add(cart);
-            _context.User.Add(user);
             _context.SaveChanges();
 
             return Ok(user);

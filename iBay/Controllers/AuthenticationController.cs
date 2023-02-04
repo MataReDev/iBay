@@ -67,7 +67,7 @@ namespace iBay.Controllers
 
         }
 
-        [HttpGet, Route("email")]
+        [NonAction]
         public IActionResult GetEmailFromToken([FromHeader]string authorization)
         {
             authorization = authorization.Substring("Bearer ".Length).Trim();
@@ -78,7 +78,7 @@ namespace iBay.Controllers
             return Ok(email);
         }
 
-        [HttpGet, Route("role")]
+        [NonAction]
         public IActionResult GetRoleFromToken([FromHeader] string authorization)
         {
             authorization = authorization.Substring("Bearer ".Length).Trim();

@@ -161,6 +161,10 @@ namespace iBay.Controllers
             try {
                 _context.User.Remove(user);
                 _context.SaveChanges();
+
+                _context.Remove(_context.Cart.Single(a => a.UserId == user.Id));
+                _context.SaveChanges();
+
                 return Ok(user);
             } catch (Exception ex) {
                 return BadRequest(ex);
